@@ -4,7 +4,7 @@ require("dotenv").config();
 const { v4: uuid } = require("uuid");
 
 /**Import helpers */
-const { generateJwt } = require("./helpers/generateJwt");
+const { generateJWT } = require("./helpers/generateJwt");
 
 /**Model import */
 const User = require("./users.model");
@@ -45,7 +45,7 @@ exports.Signup = async (req, res) => {
     }
 
     //Hash the password
-    const hash = await User.hashPassword(result.value.password);
+    const hash = await User.hashPassword(result.value.password.toLowerCase());
     result.value.password = hash; // set hashed password to result variable
     //Delete confirmPassword value
     delete result.value.confirmPassword;
@@ -74,6 +74,92 @@ exports.Signup = async (req, res) => {
     return res.status(500).json({
       error: true,
       message: "Cannot register",
+    });
+  }
+};
+
+/**Login Fuction */
+exports.Login = async (req, res) => {
+  try {
+    //set email and password to lowecase
+    const email = req.body.email.toLowerCase();
+    const password = req.body.password.toLowerCase();
+
+    // check and throw error if email or password doesn't exits
+    if (!email || !password) {
+      return res.status(400).json({
+        error: true,
+        message: "Cannot authorize user.",
+      });
+    }
+
+    //1. Find if any account with that email exists in DB
+    const user = await User.findOne({ email: email });
+
+    // NOT FOUND - Throw error
+    if (!user) {
+      return res.status(404).json({
+        error: true,
+        message: "Looks like we don’t have your email in our system!",
+      });
+    }
+
+    //2. Throw error if account is not activated
+    if (!user.active) {
+      return res.status(400).json({
+        error: true,
+        message: "User is blocked please contact Administration", //Replace this message if email otp is enable
+      });
+    }
+
+    //3. Verify the password is valid
+    const isValid = await User.comparePasswords(password, user.password);
+    // Throw error if password doesn't match
+    if (!isValid) {
+      return res.status(400).json({
+        error: true,
+        message: "Looks like that password doesn’t match!",
+      });
+    }
+
+    //Generate Access token
+    const { error, token, context } = await generateJWT(user.email, user.userId, user.name);
+
+    //throw error if token doesn't exists
+    if (error) {
+      console.error("Access-token-generation-error", context);
+      return res.status(500).json({
+        error: true,
+        message: "Couldn't create access token. Please try again later",
+      });
+    }
+    let ifTokenExists = false;
+
+    await User.find({ email: req.body.email }, "accessToken -_id").then((token) => {
+      //Success
+      if (token[0].accessToken !== null) {
+        ifTokenExists = true;
+        return res.send({
+          success: true,
+          message: "User logged in successfully",
+          accessToken: token[0].accessToken,
+        });
+      }
+    });
+    if (ifTokenExists == false) {
+      user.accessToken = token;
+      await user.save();
+      return res.send({
+        success: true,
+        message: "Token Generated",
+        accessToken: token,
+      });
+    }
+  } catch (error) {
+    console.error("login-error", error);
+    return res.status(500).json({
+      error: true,
+      message: "Login Error",
     });
   }
 };
