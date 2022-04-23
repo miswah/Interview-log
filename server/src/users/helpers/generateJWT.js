@@ -3,7 +3,7 @@ require("dotenv").config();
 
 //set options for jwt
 const options = {
-  expriesIn: "365y", //temp will move in production
+  expiresIn: "365y", //temp will move in production
 };
 
 /**Generate JWT and return the token */
