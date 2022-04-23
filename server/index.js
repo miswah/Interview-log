@@ -11,6 +11,9 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 require("dotenv").config();
 
+/**Routes Imports */
+const AuthRoutes = require("./routes/user.routes");
+
 /**Sentry Import */
 const Sentry = require("@sentry/node");
 const Tracing = require("@sentry/tracing");
@@ -74,6 +77,9 @@ app.get("/ping", (req, res) => {
 app.get("/debug-sentry", function mainHandler(req, res) {
   throw new Error("My first Sentry error!");
 });
+
+/**Main ROutes */
+app.use("/user", AuthRoutes);
 
 /**Sentry Error handler */
 // The error handler must be before any other error middleware and after all controllers
