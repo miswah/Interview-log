@@ -64,6 +64,11 @@ exports.Signup = async (req, res) => {
     // Make the Call to save into DB the result variable
     const newUser = new User(result.value);
     await newUser.save();
+
+    return res.status(200).json({
+      error: false,
+      message: "Registration Successful",
+    });
   } catch (error) {
     console.error("signup-error", error);
     return res.status(500).json({
