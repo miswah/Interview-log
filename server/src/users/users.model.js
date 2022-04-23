@@ -8,7 +8,7 @@ const userSchema = new Schema(
     userId: { type: String, require: true, unique: true },
     email: { type: String, require: true, unique: true },
     name: { type: String, require: true },
-    active: { type: Boolean, require: true },
+    active: { type: Boolean, require: true, default: true },
     password: { type: String, require: true },
     resetPasswordToken: { type: String, default: null },
     resetPasswordExpires: { type: Date, default: null },
