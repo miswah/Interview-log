@@ -137,7 +137,7 @@ exports.Login = async (req, res) => {
     //Generate Access token
     const { error, token, context } = await generateJWT(user.email, user.userId, user.name);
 
-    //throw error if token doesn't exists
+    //throw error if token generation doesn't complete
     if (error) {
       console.error("Access-token-generation-error", context);
       return res.status(500).json({
