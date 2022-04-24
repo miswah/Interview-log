@@ -19,10 +19,10 @@ module.exports = async (req, res, next) => {
       });
 
     // Split the token from bearer part or whatever comes before " "
-    const token = req.headers.authorization.split(" ")[1]; // Bearer <token>
+    const token = req.headers.authorization.split(" ")[2]; // Bearer <token>
 
     //Fetch the token from DB
-    const user = await User.findOne({ accessToken: token }, "accessToken -_id");
+    const user = await User.findOne({ accessToken: token }, "accessToken userId -_id");
 
     //check if Token exists else end request and send error
     if (!user) {
@@ -36,7 +36,7 @@ module.exports = async (req, res, next) => {
     const result = jwt.verify(token, process.env.JWT_SECRET, { expiresIn: "365y" });
 
     //Check if the userId matches for both user fetched from db and the user id of parsed Token
-    if (user.userId === result.id) {
+    if (!user.userId === result.id) {
       return res.status(401).json({
         error: true,
         message: `Invalid token`,
