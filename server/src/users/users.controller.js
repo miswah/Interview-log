@@ -162,3 +162,32 @@ exports.Login = async (req, res) => {
     });
   }
 };
+
+/**Logout Function */
+exports.Logout = async (req, res) => {
+  try {
+    console.log(req.decoded);
+    //Get the user id from decoded Token
+    const { id } = req.decoded;
+
+    //get the user Data from db using the decoded userId
+    const user = await User.findOne({ userId: id }, "accessToken -_id");
+
+    //set the token to null
+    user.accessToken = null;
+
+    //save the nulled token data to db
+    await user.save();
+
+    return res.send({
+      error: false,
+      message: "Logout Sucessful",
+    });
+  } catch (error) {
+    console.error("logout-error", error);
+    return res.status(500).json({
+      error: true,
+      message: "Logout Error",
+    });
+  }
+};
