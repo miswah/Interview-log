@@ -198,3 +198,50 @@ exports.Logout = async (req, res) => {
     });
   }
 };
+
+/** Reset Password Function */
+exports.ResetPassword = async (req, res) => {
+  try {
+    //Destructure password and Confirmpasswords
+    const { password, confirmPassword } = req.body;
+    //get Token from req header
+    const token = req.headers.authorization.split(" ")[2];
+
+    //Check if all vields exits
+    if (!token || !password || !confirmPassword) {
+      return res.status(403).json({
+        error: true,
+        message: "Couldn't process request. Please provide all mandatory fields",
+      });
+    }
+
+    //check if both passwords are same or not else end request and throw error
+    if (password !== confirmPassword) {
+      return res.status(400).json({
+        error: true,
+        message: "Passwords didn't match",
+      });
+    }
+
+    //Get user Data
+    const user = await User.findOne({ accessToken: token }, "accessToken _id");
+
+    //Hash the new password
+    const hash = await User.hashPassword(password);
+
+    //set hashed password to user data and save it to db
+    user.password = hash;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Password has been changed",
+    });
+  } catch (error) {
+    console.error("Password-reset-error", error);
+    return res.status(500).json({
+      error: true,
+      message: "Password Couldn't be reset please try again",
+    });
+  }
+};
