@@ -122,6 +122,18 @@ exports.Login = async (req, res) => {
       });
     }
 
+    // Fetch Token from the DB
+    const lastToken = await User.findOne({ email: req.body.email }, "accessToken -_id");
+
+    //4. Check if token exists
+    if (lastToken && lastToken.length > 1) {
+      return res.send({
+        success: true,
+        message: "User logged in successfully",
+        accessToken: lastToken.accessToken,
+      });
+    }
+
     //Generate Access token
     const { error, token, context } = await generateJWT(user.email, user.userId, user.name);
 
@@ -133,28 +145,15 @@ exports.Login = async (req, res) => {
         message: "Couldn't create access token. Please try again later",
       });
     }
-    let ifTokenExists = false;
 
-    await User.find({ email: req.body.email }, "accessToken -_id").then((token) => {
-      //Success
-      if (token[0].accessToken !== null) {
-        ifTokenExists = true;
-        return res.send({
-          success: true,
-          message: "User logged in successfully",
-          accessToken: token[0].accessToken,
-        });
-      }
+    //If Token Doesnt Exists save the token in DB
+    user.accessToken = token;
+    await user.save();
+    return res.send({
+      success: true,
+      message: "Token Generated",
+      accessToken: token,
     });
-    if (ifTokenExists == false) {
-      user.accessToken = token;
-      await user.save();
-      return res.send({
-        success: true,
-        message: "Token Generated",
-        accessToken: token,
-      });
-    }
   } catch (error) {
     console.error("login-error", error);
     return res.status(500).json({
