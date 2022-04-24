@@ -166,12 +166,19 @@ exports.Login = async (req, res) => {
 /**Logout Function */
 exports.Logout = async (req, res) => {
   try {
-    console.log(req.decoded);
     //Get the user id from decoded Token
-    const { id } = req.decoded;
+    const { userId } = req.decoded;
 
     //get the user Data from db using the decoded userId
-    const user = await User.findOne({ userId: id }, "accessToken -_id");
+    const user = await User.findOne({ userId: userId }, "accessToken _id");
+
+    //Check if user data Exists
+    if (!user) {
+      return res.status(404).json({
+        error: true,
+        message: "User Doesn't exists",
+      });
+    }
 
     //set the token to null
     user.accessToken = null;
@@ -179,7 +186,7 @@ exports.Logout = async (req, res) => {
     //save the nulled token data to db
     await user.save();
 
-    return res.send({
+    return res.staus(200).json({
       error: false,
       message: "Logout Sucessful",
     });
