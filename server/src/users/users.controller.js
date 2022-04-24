@@ -122,10 +122,22 @@ exports.Login = async (req, res) => {
       });
     }
 
+    // Fetch Token from the DB
+    const lastToken = await User.findOne({ email: req.body.email }, "accessToken -_id");
+
+    //4. Check if token exists
+    if (lastToken && lastToken.length > 1) {
+      return res.send({
+        success: true,
+        message: "User logged in successfully",
+        accessToken: lastToken.accessToken,
+      });
+    }
+
     //Generate Access token
     const { error, token, context } = await generateJWT(user.email, user.userId, user.name);
 
-    //throw error if token doesn't exists
+    //throw error if token generation doesn't complete
     if (error) {
       console.error("Access-token-generation-error", context);
       return res.status(500).json({
@@ -133,33 +145,56 @@ exports.Login = async (req, res) => {
         message: "Couldn't create access token. Please try again later",
       });
     }
-    let ifTokenExists = false;
 
-    await User.find({ email: req.body.email }, "accessToken -_id").then((token) => {
-      //Success
-      if (token[0].accessToken !== null) {
-        ifTokenExists = true;
-        return res.send({
-          success: true,
-          message: "User logged in successfully",
-          accessToken: token[0].accessToken,
-        });
-      }
+    //If Token Doesnt Exists save the token in DB
+    user.accessToken = token;
+    await user.save();
+    return res.send({
+      success: true,
+      message: "Token Generated",
+      accessToken: token,
     });
-    if (ifTokenExists == false) {
-      user.accessToken = token;
-      await user.save();
-      return res.send({
-        success: true,
-        message: "Token Generated",
-        accessToken: token,
-      });
-    }
   } catch (error) {
     console.error("login-error", error);
     return res.status(500).json({
       error: true,
       message: "Login Error",
+    });
+  }
+};
+
+/**Logout Function */
+exports.Logout = async (req, res) => {
+  try {
+    //Get the user id from decoded Token
+    const { userId } = req.decoded;
+
+    //get the user Data from db using the decoded userId
+    const user = await User.findOne({ userId: userId }, "accessToken _id");
+
+    //Check if user data Exists
+    if (!user) {
+      return res.status(404).json({
+        error: true,
+        message: "User Doesn't exists",
+      });
+    }
+
+    //set the token to null
+    user.accessToken = null;
+
+    //save the nulled token data to db
+    await user.save();
+
+    return res.staus(200).json({
+      error: false,
+      message: "Logout Sucessful",
+    });
+  } catch (error) {
+    console.error("logout-error", error);
+    return res.status(500).json({
+      error: true,
+      message: "Logout Error",
     });
   }
 };
