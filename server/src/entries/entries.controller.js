@@ -114,6 +114,15 @@ exports.Fetch = async (req, res) => {
       });
     }
 
+    //Check if the entity id is valid
+    if (!mongoose.Types.ObjectId.isValid(entityId)) {
+      return res.json({
+        error: true,
+        status: 400,
+        message: "Invalid object id",
+      });
+    }
+
     //Fetch the entry from DB
     const entry = await Entry.findOne({ userId: userId, _id: entityId });
 
