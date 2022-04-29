@@ -1,8 +1,14 @@
 const mongooes = require("mongooes");
 const Schema = mongooes.Schema;
 
-/**Entity Schema for Interview Entries */
+//Contact Schema
+const contactSchema = new Schema({
+  name: { type: String, require: true },
+  mobileNo: { type: Number, require: false },
+  email: { type: String, require: false },
+});
 
+/**Entity Schema for Interview Entries */
 const entitySchema = new Schema(
   {
     userId: { type: String, require: true },
@@ -11,7 +17,7 @@ const entitySchema = new Schema(
     postLink: { type: String, require: true },
     salaryRange: { type: String, require: false },
     location: { type: String, require: true },
-    contact: { type: String, require: false },
+    contact: [contactSchema],
     status: { type: String, require: true, default: "New" },
     dateOfApplication: { type: String, require: true },
     remarks: { type: String, require: false },
