@@ -14,6 +14,7 @@ require("dotenv").config();
 /**Routes Imports */
 const AuthRoutes = require("./routes/user.routes");
 const EntryRoutes = require("./routes/entry.routes");
+const UpdateRoutes = require("./routes/update.routes");
 
 /**Sentry Import */
 const Sentry = require("@sentry/node");
@@ -82,6 +83,7 @@ app.get("/debug-sentry", function mainHandler(req, res) {
 /**Main ROutes */
 app.use("/user", AuthRoutes);
 app.use("/entry", EntryRoutes);
+app.use("/updates", UpdateRoutes);
 
 /**Sentry Error handler */
 // The error handler must be before any other error middleware and after all controllers
