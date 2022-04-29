@@ -49,7 +49,7 @@ exports.Create = async (req, res) => {
     if (entry) {
       return res.json({
         error: true,
-        status: 400,
+        status: 409,
         message: "Entry for this job postion already exists",
       });
     }
