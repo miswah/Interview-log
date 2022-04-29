@@ -10,5 +10,6 @@ const UpdateController = require("../src/updates/update.controller");
 
 /**Define Routes */
 router.post("/create", cleanBody, validateToken, UpdateController.Create);
+router.get("/all/:entry_id", cleanBody, validateToken, UpdateController.All);
 
 module.exports = router;
