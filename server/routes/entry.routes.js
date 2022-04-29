@@ -10,5 +10,7 @@ const EntryController = require("../src/entries/entries.controller");
 
 /**Define Routes */
 router.post("/create", cleanBody, validateToken, EntryController.Create);
+router.get("/all", cleanBody, validateToken, EntryController.All);
+router.get("/:entry_id", cleanBody, validateToken, EntryController.Fetch);
 
 module.exports = router;

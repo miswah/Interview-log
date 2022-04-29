@@ -71,3 +71,63 @@ exports.Create = async (req, res) => {
     });
   }
 };
+
+/**Get list of entries */
+exports.All = async (req, res) => {
+  try {
+    //fetch user id from request decoded
+    const userId = req.decoded.userId;
+
+    //Fetch data from db
+    const entries = await Entry.find({ userId: userId });
+
+    //send data in proper formate if data exists
+    return res.json({
+      error: false,
+      status: 200,
+      message: entries,
+    });
+  } catch (error) {
+    console.error("Entry-fetch-all-error", error);
+    return res.status(500).json({
+      error: true,
+      message: "Could Find entried",
+    });
+  }
+};
+
+/**Get entry by id */
+exports.Fetch = async (req, res) => {
+  try {
+    //fetch user id from request decoded
+    const userId = req.decoded.userId;
+
+    //fetch entity id from request params
+    const entityId = req.params.entry_id;
+
+    //check if the entity id exists
+    if (!entityId) {
+      return res.json({
+        error: false,
+        status: 404,
+        message: "entry Id doesn't exists",
+      });
+    }
+
+    //Fetch the entry from DB
+    const entry = await Entry.findOne({ userId: userId, _id: entityId });
+
+    //Check if entry exists else throw exists
+    return res.json({
+      error: false,
+      status: 200,
+      message: entry,
+    });
+  } catch (error) {
+    console.error("Entry-fetch-one-error", error);
+    return res.status(500).json({
+      error: true,
+      message: "Could Find entry",
+    });
+  }
+};
