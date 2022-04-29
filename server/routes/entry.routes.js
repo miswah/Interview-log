@@ -9,6 +9,6 @@ const validateToken = require("../middlewares/validateToken");
 const EntryController = require("../src/entries/entries.controller");
 
 /**Define Routes */
-router.post("/create", cleandBody, validateToken, EntryController.Create);
+router.post("/create", cleanBody, validateToken, EntryController.Create);
 
 module.exports = router;

@@ -1,4 +1,4 @@
-const mongooes = require("mongooes");
+const mongooes = require("mongoose");
 const Schema = mongooes.Schema;
 
 //Contact Schema

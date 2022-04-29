@@ -16,7 +16,7 @@ const EntrySchema = Joi.object().keys({
     Joi.object({
       name: Joi.string().required(),
       mobileNo: Joi.number(),
-      email: Joi.string().email({ minDomainSegment: 2 }),
+      email: Joi.string().email({ minDomainSegments: 2 }),
     })
   ),
   salaryRange: Joi.string().required(),
