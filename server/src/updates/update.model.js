@@ -1,5 +1,5 @@
-const mongooes = require("mongoose");
-const Schema = mongooes.Schema;
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
 /**Update Schema for Entries */
@@ -19,5 +19,5 @@ const updateSchema = new Schema(
 );
 
 /**Assign Schema and set a collection name for mongo */
-const Updates = mongooes.model("updates", updateSchema);
+const Updates = mongoose.model("updates", updateSchema);
 module.exports = Updates;
