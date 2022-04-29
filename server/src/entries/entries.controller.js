@@ -19,7 +19,6 @@ const EntrySchema = Joi.object().keys({
       email: Joi.string().email({ minDomainSegments: 2 }),
     })
   ),
-  salaryRange: Joi.string().required(),
   dateOfApplication: Joi.string().required(),
   remarks: Joi.string(),
 });
