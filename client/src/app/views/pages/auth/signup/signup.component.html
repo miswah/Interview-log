@@ -1,4 +1,4 @@
-<div class="center-wrap">
+<div class="center-wrap" [formGroup]="SignupModel">
   <div class="section text-center">
     <h4 class="mb-4 pb-3">Sign Up</h4>
     <div class="form-group">
@@ -7,9 +7,19 @@
         name="logname"
         class="form-style"
         placeholder="Your Full Name"
-        id="logname"
+        id="signupname"
         autocomplete="off"
+        [formControl]="SignupModel.controls['name']"
       />
+      <p
+        class="mt-2 text-danger"
+        *ngIf="
+          SignupModel.controls['name'].hasError('required') &&
+          SignupModel.controls['name'].touched
+        "
+      >
+        Name is required.
+      </p>
       <i class="input-icon uil uil-user"></i>
     </div>
     <div class="form-group mt-2">
@@ -18,22 +28,112 @@
         name="logemail"
         class="form-style"
         placeholder="Your Email"
-        id="logemail"
+        id="signupemail"
         autocomplete="off"
+        [formControl]="SignupModel.controls['email']"
       />
+      <p
+        class="mt-2 text-danger"
+        *ngIf="
+          SignupModel.controls['email'].hasError('required') &&
+          SignupModel.controls['email'].touched
+        "
+      >
+        Email is required.
+      </p>
+
+      <p
+        class="mt-2 text-danger"
+        *ngIf="
+          SignupModel.controls['email'].hasError('email') &&
+          SignupModel.controls['email'].touched
+        "
+      >
+        Please Provide a valid Email ID.
+      </p>
+
       <i class="input-icon uil uil-at"></i>
     </div>
     <div class="form-group mt-2">
       <input
         type="password"
-        name="logpass"
+        name="signuppass"
         class="form-style"
         placeholder="Your Password"
-        id="logpass"
+        id="Singuppass"
         autocomplete="off"
+        maxlength="5"
+        [formControl]="SignupModel.controls['password']"
       />
       <i class="input-icon uil uil-lock-alt"></i>
+      <p
+        class="mt-2 text-danger"
+        *ngIf="
+          SignupModel.controls['password'].hasError('required') &&
+          SignupModel.controls['password'].touched
+        "
+      >
+        Password is required.
+      </p>
+      <p
+        class="mt-2 text-danger"
+        *ngIf="
+          SignupModel.controls['password'].hasError('pattern') &&
+          SignupModel.controls['password'].touched
+        "
+      >
+        Password needs to be alphanumeric and minimum of 5 character.
+      </p>
     </div>
-    <a href="#" class="btn mt-4">submit</a>
+
+    <div class="form-group mt-2">
+      <input
+        type="Confirmpassword"
+        name="logpassconfirm"
+        class="form-style"
+        placeholder="Confirm Password"
+        id="signupconfirmpass"
+        autocomplete="off"
+        maxlength="5"
+        [formControl]="SignupModel.controls['confirmpassword']"
+      />
+      <i class="input-icon uil uil-lock-alt"></i>
+      <p
+        class="mt-2 text-danger"
+        *ngIf="
+          SignupModel.controls['confirmpassword'].hasError('required') &&
+          SignupModel.controls['confirmpassword'].touched
+        "
+      >
+        Confirm Password Field is required.
+      </p>
+      <p
+        class="mt-2 text-danger"
+        *ngIf="
+          SignupModel.controls['confirmpassword'].hasError('pattern') &&
+          SignupModel.controls['confirmpassword'].touched
+        "
+      >
+        Confirm Password needs to be alphanumeric and minimum of 5 character.
+      </p>
+      <p
+        class="mt-2 text-danger"
+        *ngIf="
+          !isConfirmPasswordValid &&
+          SignupModel.controls['confirmpassword'].touched
+        "
+      >
+        Confirm Password needs to match Password.
+      </p>
+    </div>
+    <button
+      class="btn mt-4"
+      (click)="onSubmit(SignupModel.value)"
+      [disabled]="!SignupModel.valid"
+    >
+      submit
+    </button>
   </div>
 </div>
+
+<button (click)="tost()">click</button>
