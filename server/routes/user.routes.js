@@ -10,7 +10,7 @@ const AuthController = require("../src/users/users.controller");
 
 /**Define Routes */
 router.post("/signup", cleanBody, AuthController.Signup);
-router.get("/login", cleanBody, AuthController.Login);
+router.post("/login", cleanBody, AuthController.Login);
 router.patch("/logout", cleanBody, validateToken, AuthController.Logout);
 router.patch("/reset-password", cleanBody, validateToken, AuthController.ResetPassword);
 
