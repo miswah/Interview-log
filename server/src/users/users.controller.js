@@ -4,7 +4,7 @@ require("dotenv").config();
 const { v4: uuid } = require("uuid");
 
 /**Import helpers */
-const { generateJWT } = require("./helpers/generateJwt");
+const { generateJWT } = require("./helpers/generateJWT");
 
 /**Model import */
 const User = require("./users.model");
